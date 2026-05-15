@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBX Bonus Panel</title>
+  <style>
+    :root{
+      --bg0:#050b16;
+      --bg1:#081326;
+      --bg2:#0d1f3d;
+      --card: rgba(10, 17, 32, .82);
+      --card2: rgba(255,255,255,.05);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,170,60,.18);
+      --text:#f2f6ff;
+      --muted:#aebcdc;
+      --gold:#ffcc74;
+      --orange:#ff8a1f;
+      --green:#44f2a3;
+      --shadow: 0 28px 80px rgba(0,0,0,.48);
+      --radius: 30px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(255, 180, 70, .18), transparent 23%),
+        radial-gradient(circle at 83% 18%, rgba(75, 145, 255, .16), transparent 18%),
+        radial-gradient(circle at 45% 88%, rgba(68, 242, 163, .11), transparent 24%),
+        linear-gradient(150deg, var(--bg2), var(--bg0));
+    }
+
+    .grid{
+      position:fixed; inset:0; pointer-events:none; opacity:.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 42%, transparent 100%);
+    }
+
+    .glow{
+      position:fixed; inset:auto;
+      width: 280px; height: 280px; border-radius: 50%;
+      filter: blur(18px);
+      pointer-events:none;
+      opacity:.35;
+      background: radial-gradient(circle, rgba(255, 174, 63, .45), transparent 62%);
+      left: -70px; top: 120px;
+      animation: floaty 8s ease-in-out infinite;
+    }
+    .glow.two{
+      right: -80px; left:auto; top: 70px;
+      background: radial-gradient(circle, rgba(80, 160, 255, .35), transparent 62%);
+      animation-delay: 1.5s;
+    }
+
+    @keyframes floaty{
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-18px) }
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      position:relative;
+      z-index:1;
+    }
+
+    .card{
+      width:min(1080px,100%);
+      border-radius: 36px;
+      background: linear-gradient(180deg, rgba(13, 20, 39, .92), rgba(8, 12, 22, .84));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar{
+      padding:18px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:14px; min-width:0;
+    }
+
+    .brandmark{
+      width:54px; height:54px; border-radius:18px;
+      background: linear-gradient(145deg, #ffd980, #ff8c1f);
+      color:#1a1200;
+      display:grid; place-items:center;
+      font-weight:1000; letter-spacing:-1px;
+      box-shadow: 0 14px 30px rgba(255, 145, 50, .22);
+      flex:0 0 auto;
+    }
+
+    .brand h1{ margin:0; font-size:18px; line-height:1.1; }
+    .brand p{ margin:4px 0 0; font-size:13px; color:var(--muted); }
+
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      font-size:13px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.07);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .chip strong{ color:var(--text); }
+    .chip.ok{
+      background: rgba(68,242,163,.11);
+      border-color: rgba(68,242,163,.20);
+      color: #9cf7cf;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns: 1.08fr .92fr;
+    }
+
+    .left, .right{ padding:28px; }
+    .left{ border-right:1px solid rgba(255,255,255,.06); }
+
+    .hero{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:18px;
+      margin-bottom:20px;
+    }
+    .hero h2{
+      margin:0 0 10px;
+      font-size: clamp(30px, 4.4vw, 54px);
+      line-height:.94;
+      letter-spacing:-1.8px;
+    }
+    .hero p{
+      margin:0;
+      max-width: 50ch;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.62;
+    }
+
+    .medal{
+      width:132px; aspect-ratio:1; border-radius: 34px;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,.25), transparent 18%),
+        linear-gradient(145deg, #ffd66d, #ff841f);
+      position:relative;
+      box-shadow: 0 22px 52px rgba(255, 149, 58, .25);
+      transform: rotate(10deg);
+      flex:0 0 auto;
+    }
+    .medal:before, .medal:after{
+      content:"";
+      position:absolute; inset:18px;
+      border-radius: 26px;
+      border: 2px solid rgba(15,12,4,.18);
+    }
+    .medal:after{ inset:36px; border-radius:18px; border-width:3px; }
+
+    .panel{
+      margin-top:18px;
+      padding:18px;
+      border-radius:24px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .steps{
+      display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;
+    }
+    .step{
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .step.active{
+      background: linear-gradient(145deg, #ffd980, #ff9c30);
+      border-color: transparent;
+      color:#1c1202;
+      font-weight:900;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin: 12px 0 8px;
+    }
+
+    .input, .select{
+      width:100%;
+      padding:16px 16px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.09);
+      background: rgba(5,10,18,.92);
+      color:var(--text);
+      outline:none;
+      font-size:15px;
+      transition:.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .input:focus, .select:focus{
+      border-color: rgba(255, 198, 122, .5);
+      box-shadow: 0 0 0 4px rgba(255, 198, 122, .12);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    .btn{
+      width:100%;
+      margin-top:12px;
+      padding:16px 18px;
+      border:0;
+      border-radius:18px;
+      font-size:15px;
+      font-weight:1000;
+      cursor:pointer;
+      color:#1a1200;
+      background: linear-gradient(145deg, #ffd880, #ff8b21);
+      box-shadow: 0 16px 38px rgba(255, 146, 52, .18);
+      transition: transform .18s ease, filter .18s ease;
+    }
+    .btn:hover{ transform: translateY(-1px) scale(1.01); filter:brightness(1.03); }
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      box-shadow:none;
+      border:1px solid rgba(255,255,255,.09);
+    }
+
+    .screen{ display:none; animation: up .32s ease both; }
+    .screen.active{ display:block; }
+
+    @keyframes up{
+      from{ opacity:0; transform: translateY(10px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .code-preview{
+      margin-top:16px;
+      border-radius:20px;
+      padding:18px;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(255, 196, 120, .16), rgba(255,255,255,.03));
+      border:1px solid rgba(255, 196, 120, .22);
+    }
+    .code-preview .title{
+      color:#ffdca0;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
+    .code-preview .code{
+      font-size:42px;
+      font-weight:1000;
+      letter-spacing:12px;
+      margin-top:4px;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+    .status{
+      padding:14px;
+      border-radius:18px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .status .k{ color:var(--muted); font-size:12px; }
+    .status .v{ margin-top:8px; font-size:18px; font-weight:900; }
+    .good{ color:#8ef7d0; }
+    .accent{ color:var(--gold); }
+
+    .list{
+      list-style:none; padding:0; margin:14px 0 0;
+      display:grid; gap:10px;
+    }
+    .list li{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      font-size:14px;
+      color:#dbe7ff;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(68,242,163,.12);
+      flex:0 0 auto;
+    }
+
+    .mini-note{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .footer{
+      padding-top:16px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform: translateX(-50%) translateY(120%);
+      background: rgba(10, 17, 32, .94);
+      border:1px solid rgba(255,255,255,.12);
+      color:white;
+      padding:12px 16px;
+      border-radius:999px;
+      box-shadow: var(--shadow);
+      transition: transform .28s ease;
+      z-index:3;
+      font-size:14px;
+    }
+    .toast.show{ transform: translateX(-50%) translateY(0); }
+
+    .spark{
+      position:absolute;
+      width:10px; height:10px; border-radius:50%;
+      background: rgba(255,255,255,.92);
+      opacity:.72;
+      animation: spark 6s linear infinite;
+      filter: blur(.2px);
+    }
+    @keyframes spark{
+      from{ transform: translateY(0) translateX(0) scale(1); opacity:0; }
+      10%{ opacity:.9; }
+      to{ transform: translateY(-240px) translateX(120px) scale(.2); opacity:0; }
+    }
+
+    .rbx-badges{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.07);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .badge .ico{
+      width:22px; height:22px; border-radius:7px;
+      background: linear-gradient(145deg, #ffd980, #ff8b21);
+      display:grid; place-items:center;
+      color:#1a1200;
+      font-size:12px;
+      font-weight:1000;
+    }
+
+    @media (max-width: 900px){
+      body{ overflow:auto; }
+      .content{ grid-template-columns:1fr; }
+      .left{ border-right:0; border-bottom:1px solid rgba(255,255,255,.06); }
+      .hero{ flex-direction:column; }
+      .medal{ width:96px; }
+      .status-grid{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="glow two"></div>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brandmark">RBX</div>
+          <div>
+            <h1>RBX Bonus Panel</h1>
+            <p>Version propre, animée et stylée</p>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip ok"><strong>Stock</strong> : plein</div>
+          <div class="chip"><strong>État</strong> : stable</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left">
+          <div class="hero">
+            <div>
+              <h2>Bonus<br>Roblox</h2>
+              <p>
+                Interface améliorée avec un code numérique fixe, des animations douces et un style plus premium.
+                Le code est écrit dans le fichier et peut être remplacé par le vôtre.
+              </p>
+
+              <div class="rbx-badges">
+                <div class="badge"><span class="ico">R</span> Roblox</div>
+                <div class="badge"><span class="ico">O</span> Robux</div>
+                <div class="badge"><span class="ico">★</span> Animations</div>
+              </div>
+            </div>
+            <div class="medal" aria-hidden="true"></div>
+          </div>
+
+          <div class="panel">
+            <div class="steps">
+              <div class="step active" id="pill1">1. Joueur</div>
+              <div class="step" id="pill2">2. Code</div>
+              <div class="step" id="pill3">3. Résultat</div>
+            </div>
+
+            <div class="screen active" id="screen1">
+              <label for="pseudo">Pseudo Roblox</label>
+              <input class="input" id="pseudo" placeholder="Entre le pseudo" />
+
+              <div class="row">
+                <div>
+                  <label for="bonus">Pack</label>
+                  <select class="select" id="bonus">
+                    <option>Pack 250</option>
+                    <option>Pack 500</option>
+                    <option>Pack 1000</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="style">Style</label>
+                  <select class="select" id="style">
+                    <option>Gold</option>
+                    <option>Dark</option>
+                    <option>Blue</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn" onclick="nextStep()">Continuer</button>
+            </div>
+
+            <div class="screen" id="screen2">
+              <label for="usercode">Code à 4 chiffres</label>
+              <input class="input" id="usercode" placeholder="0000" maxlength="4" inputmode="numeric" />
+
+              <div class="code-preview">
+                <div class="title">Code fixe du site</div>
+                <div class="code" id="fixedCode">4827</div>
+              </div>
+
+              <button class="btn" onclick="checkCode()">Valider</button>
+              <button class="btn secondary" onclick="backStep()">Retour</button>
+            </div>
+
+            <div class="screen" id="screen3">
+              <ul class="list">
+                <li><span class="dot"></span>Pack détecté comme disponible</li>
+                <li><span class="dot"></span>Code correct et validé</li>
+                <li><span class="dot"></span>Stock affiché comme plein</li>
+              </ul>
+              <button class="btn" onclick="done()">Terminer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="panel">
+            <div class="steps">
+              <div class="step active">Statut</div>
+              <div class="step">Détails</div>
+              <div class="step">Stock</div>
+            </div>
+
+            <div class="status-grid">
+              <div class="status">
+                <div class="k">Roblox</div>
+                <div class="v good">OK</div>
+              </div>
+              <div class="status">
+                <div class="k">Robux</div>
+                <div class="v accent">OK</div>
+              </div>
+              <div class="status">
+                <div class="k">Serveur</div>
+                <div class="v good">Stable</div>
+              </div>
+            </div>
+
+            <div class="mini-note">
+              Pour changer le code, remplace simplement la valeur <strong>4827</strong> dans le JavaScript.
+              Le champ accepte uniquement 4 chiffres.
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="steps">
+              <div class="step active">Design</div>
+              <div class="step">Effets</div>
+            </div>
+            <div class="mini-note">
+              La page contient des fonds lumineux, des cartes translucides, un effet de flotteur et des petites étincelles pour un rendu plus vivant.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        Fichier HTML unique • sans images externes • ouverture directe dans le navigateur
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Code accepté</div>
+
+  <script>
+    const FIXED_CODE = "4827";
+    const toast = document.getElementById("toast");
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(window.__t);
+      window.__t = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function setScreen(n){
+      const screens = ["screen1","screen2","screen3"];
+      const pills = ["pill1","pill2","pill3"];
+      screens.forEach((id, i) => document.getElementById(id).classList.toggle("active", i === (n - 1)));
+      pills.forEach((id, i) => document.getElementById(id).classList.toggle("active", i === (n - 1)));
+    }
+
+    function nextStep(){
+      const pseudo = document.getElementById("pseudo").value.trim();
+      if(!pseudo){
+        showToast("Écris un pseudo");
+        return;
+      }
+      setScreen(2);
+      showToast("Étape suivante");
+    }
+
+    function backStep(){
+      setScreen(1);
+      showToast("Retour");
+    }
+
+    function checkCode(){
+      const entered = document.getElementById("usercode").value.trim();
+      if(entered === FIXED_CODE){
+        setScreen(3);
+        showToast("Code correct");
+      }else{
+        showToast("Code incorrect");
+      }
+    }
+
+    function done(){
+      showToast("Terminé");
+    }
+
+    document.getElementById("fixedCode").textContent = FIXED_CODE;
+    document.getElementById("usercode").addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+    });
+
+    const card = document.getElementById("card");
+    for(let i = 0; i < 20; i++){
+      const s = document.createElement("span");
+      s.className = "spark";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = (55 + Math.random() * 45) + "%";
+      s.style.animationDelay = (Math.random() * 6) + "s";
+      s.style.animationDuration = (4 + Math.random() * 4) + "s";
+      card.appendChild(s);
+    }
+  </script>
+</body>
+</html>
