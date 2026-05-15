@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roblox Bonus Hub</title>
+  <style>
+    :root{
+      --bg1:#07111f;
+      --bg2:#0b1c36;
+      --card: rgba(10, 18, 35, 0.78);
+      --stroke: rgba(255,255,255,.10);
+      --text:#eef4ff;
+      --muted:#aab8d6;
+      --accent:#f7b34a;
+      --accent2:#ff7a18;
+      --good:#3cf0a5;
+      --shadow: 0 24px 70px rgba(0,0,0,.45);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(247,179,74,.20), transparent 25%),
+        radial-gradient(circle at 85% 20%, rgba(80,150,255,.18), transparent 20%),
+        radial-gradient(circle at 50% 85%, rgba(60,240,165,.12), transparent 25%),
+        linear-gradient(160deg, var(--bg2), var(--bg1));
+    }
+
+    .bg-grid{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+    }
+
+    .float{
+      position: fixed;
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+      animation: drift 10s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .f1{ width:140px; height:140px; left: 8%; top: 14%; transform: rotate(17deg); animation-delay: 0s; }
+    .f2{ width:90px; height:90px; right: 10%; top: 16%; transform: rotate(-8deg); animation-delay: 1.2s; }
+    .f3{ width:120px; height:120px; right: 14%; bottom: 14%; transform: rotate(10deg); animation-delay: 2.4s; }
+    .f4{ width:70px; height:70px; left: 14%; bottom: 18%; transform: rotate(-14deg); animation-delay: 1.7s; }
+
+    @keyframes drift{
+      0%,100%{ transform: translateY(0) rotate(var(--rot, 0deg)); }
+      50%{ transform: translateY(-14px) rotate(calc(var(--rot, 0deg) + 4deg)); }
+    }
+
+    .wrap{
+      min-height: 100%;
+      display:grid;
+      place-items:center;
+      padding: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card{
+      width: min(960px, 100%);
+      background: linear-gradient(180deg, rgba(15,24,46,.90), rgba(8,13,25,.82));
+      border: 1px solid var(--stroke);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      gap: 16px;
+      align-items:center;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo{
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #ffd27d, #ff8c2a);
+      display:grid;
+      place-items:center;
+      color:#1a1200;
+      font-weight: 900;
+      letter-spacing: -1px;
+      box-shadow: 0 12px 30px rgba(255, 146, 51, .22);
+      flex: 0 0 auto;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .brand p{
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .pill{
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(60,240,165,.12);
+      border: 1px solid rgba(60,240,165,.22);
+      color: #9ef7d0;
+      font-weight: 700;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 0;
+    }
+
+    .left{
+      padding: 28px;
+      border-right: 1px solid rgba(255,255,255,.06);
+    }
+    .right{
+      padding: 28px;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(247,179,74,.13), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+    }
+
+    .hero{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+    .hero h2{
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: .95;
+      margin: 0 0 12px;
+      letter-spacing: -1.5px;
+    }
+    .hero .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 44ch;
+    }
+
+    .orb{
+      width: 130px;
+      aspect-ratio: 1;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 28% 28%, rgba(255,255,255,.26), transparent 18%),
+        linear-gradient(145deg, #ffcb68, #ff7f1c);
+      position: relative;
+      box-shadow: 0 18px 50px rgba(255, 136, 32, .26);
+      transform: rotate(12deg);
+      flex: 0 0 auto;
+    }
+    .orb:before, .orb:after{
+      content:"";
+      position:absolute;
+      inset: 18px;
+      border-radius: 26px;
+      border: 2px solid rgba(17,16,6,.18);
+    }
+    .orb:after{
+      inset: 36px;
+      border-radius: 18px;
+      border-width: 3px;
+    }
+
+    .panel{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .steps{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 16px;
+    }
+    .step{
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .step.active{
+      color: #1b1302;
+      background: linear-gradient(145deg, #ffd27d, #ff9a31);
+      border-color: transparent;
+      font-weight: 800;
+    }
+
+    .field{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      margin: 12px 0;
+    }
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .input, .select{
+      width:100%;
+      background: rgba(5,10,21,.9);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--text);
+      padding: 16px 16px;
+      border-radius: 18px;
+      outline: none;
+      font-size: 15px;
+      transition: .2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .input:focus, .select:focus{
+      border-color: rgba(247,179,74,.45);
+      box-shadow: 0 0 0 4px rgba(247,179,74,.12);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn{
+      width:100%;
+      border:0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-weight: 900;
+      font-size: 15px;
+      cursor:pointer;
+      color: #1a1200;
+      background: linear-gradient(145deg, #ffd57c, #ff8b1e);
+      box-shadow: 0 16px 40px rgba(255, 145, 51, .20);
+      transition: transform .18s ease, filter .18s ease;
+      margin-top: 12px;
+    }
+    .btn:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.03); }
+
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,.09);
+    }
+
+    .codebox{
+      display:flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .codebox input{
+      text-align:center;
+      font-size: 24px;
+      letter-spacing: 12px;
+      font-weight: 900;
+      padding-left: 24px;
+    }
+
+    .bigcode{
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(247,179,74,.15), rgba(255,255,255,.03));
+      border: 1px solid rgba(247,179,74,.20);
+      text-align:center;
+    }
+    .bigcode .label{ color: #ffdca0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    .bigcode .value{ font-size: 38px; font-weight: 900; letter-spacing: 10px; margin-top: 4px; }
+
+    .stock{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .stock .item{
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .item .k{ color: var(--muted); font-size: 12px; }
+    .item .v{ margin-top: 8px; font-size: 18px; font-weight: 800; }
+    .ok{ color: #80ffd0; }
+    .warn{ color: #ffd27d; }
+
+    .mini{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .screen{
+      display:none;
+      animation: fadeUp .35s ease both;
+    }
+    .screen.active{ display:block; }
+
+    @keyframes fadeUp{
+      from{ opacity:0; transform: translateY(10px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .checklist{
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display:grid;
+      gap: 10px;
+    }
+    .checklist li{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      color: #dbe6ff;
+      font-size: 14px;
+    }
+    .dot{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 6px rgba(60,240,165,.12);
+      flex: 0 0 auto;
+    }
+
+    .footer-note{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(120%);
+      background: rgba(10, 18, 35, .92);
+      border: 1px solid rgba(255,255,255,.12);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      transition: transform .35s ease;
+      z-index: 3;
+      font-size: 14px;
+    }
+    .toast.show{ transform: translateX(-50%) translateY(0); }
+
+    .spark{
+      position:absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.9);
+      filter: blur(.2px);
+      animation: fly 6s linear infinite;
+      opacity:.75;
+    }
+    @keyframes fly{
+      from { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+      10%{ opacity:.9; }
+      to { transform: translateY(-240px) translateX(120px) scale(.2); opacity: 0; }
+    }
+
+    @media (max-width: 860px){
+      body{ overflow:auto; }
+      .content{ grid-template-columns: 1fr; }
+      .left{ border-right: 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+      .right{ background: linear-gradient(180deg, rgba(255,255,255,.03), transparent); }
+      .stock{ grid-template-columns: 1fr; }
+      .hero{ flex-direction: column; }
+      .orb{ width: 92px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="float f1"></div>
+  <div class="float f2"></div>
+  <div class="float f3"></div>
+  <div class="float f4"></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">R</div>
+          <div>
+            <h1>Roblox Bonus Hub</h1>
+            <p>Interface stylée, fluide et prête pour ton prank</p>
+          </div>
+        </div>
+        <div class="status">
+          <span class="pill">Tout en stock</span>
+          <span>Serveurs : OK</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left">
+          <div class="hero">
+            <div>
+              <h2>Gagne ton bonus<br>Roblox</h2>
+              <p class="sub">
+                Version visuelle propre, avec animations, code fixe et mise en page plus premium.
+                Le code n’est pas généré au hasard : vous le choisissez vous-mêmes dans le fichier.
+              </p>
+            </div>
+            <div class="orb" aria-hidden="true"></div>
+          </div>
+
+          <div class="panel">
+            <div class="steps">
+              <div class="step active" id="step-pill-1">1. Pseudo</div>
+              <div class="step" id="step-pill-2">2. Code</div>
+              <div class="step" id="step-pill-3">3. Stock</div>
+            </div>
+
+            <div class="screen active" id="screen-1">
+              <label for="pseudo">Pseudo Roblox</label>
+              <input class="input" id="pseudo" placeholder="Entre ton pseudo" />
+
+              <div class="row">
+                <div>
+                  <label for="bonus">Bonus souhaité</label>
+                  <select class="select" id="bonus">
+                    <option>Pack 250 Robux</option>
+                    <option>Pack 500 Robux</option>
+                    <option>Pack 1 000 Robux</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="region">Région</label>
+                  <select class="select" id="region">
+                    <option>France</option>
+                    <option>Belgique</option>
+                    <option>Suisse</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn" onclick="goToStep2()">Continuer</button>
+            </div>
+
+            <div class="screen" id="screen-2">
+              <label for="usercode">Code de vérification</label>
+              <input class="input code-input" id="usercode" placeholder="0000" maxlength="4" inputmode="numeric" />
+
+              <div class="bigcode">
+                <div class="label">Code fixé dans le site</div>
+                <div class="value" id="fixedCode">2468</div>
+              </div>
+
+              <button class="btn" onclick="verifyCode()">Valider le code</button>
+              <button class="btn secondary" onclick="backToStep1()">Retour</button>
+            </div>
+
+            <div class="screen" id="screen-3">
+              <ul class="checklist">
+                <li><span class="dot"></span>Les packs sont disponibles</li>
+                <li><span class="dot"></span>Les serveurs sont en ligne</li>
+                <li><span class="dot"></span>Le code saisi est correct</li>
+              </ul>
+              <button class="btn" onclick="finish()">Terminer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="panel">
+            <div class="steps">
+              <div class="step active">Statut</div>
+              <div class="step">Animations</div>
+              <div class="step">Stock</div>
+            </div>
+
+            <div class="stock">
+              <div class="item">
+                <div class="k">Robux</div>
+                <div class="v ok">Disponible</div>
+              </div>
+              <div class="item">
+                <div class="k">Compte</div>
+                <div class="v ok">Vérifié</div>
+              </div>
+              <div class="item">
+                <div class="k">Serveur</div>
+                <div class="v warn">Stable</div>
+              </div>
+            </div>
+
+            <div class="mini">
+              Tu peux modifier directement le code fixe dans le fichier : cherche
+              <strong>2468</strong> et remplace-le par le code que vous voulez utiliser.
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:16px;">
+            <div class="steps">
+              <div class="step active">Aperçu</div>
+              <div class="step">Effets</div>
+            </div>
+            <div class="mini">
+              Les blocs flottants, le fond en grille, les transitions et les boutons donnent un rendu
+              plus propre et plus moderne que la version précédente.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Fichier HTML unique • sans bibliothèque externe • fonctionne en ouvrant le fichier dans un navigateur
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Code accepté</div>
+
+  <script>
+    const FIXED_CODE = "2468";
+    const toast = document.getElementById("toast");
+
+    function showToast(message){
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 1700);
+    }
+
+    function setStep(n){
+      const screens = ["screen-1","screen-2","screen-3"];
+      const pills = ["step-pill-1","step-pill-2","step-pill-3"];
+
+      screens.forEach((id, i) => document.getElementById(id).classList.toggle("active", i === (n-1)));
+      pills.forEach((id, i) => document.getElementById(id).classList.toggle("active", i === (n-1)));
+    }
+
+    function goToStep2(){
+      const pseudo = document.getElementById("pseudo").value.trim();
+      if(!pseudo){
+        showToast("Écris un pseudo d'abord");
+        return;
+      }
+      setStep(2);
+      showToast("Étape 2 ouverte");
+    }
+
+    function backToStep1(){
+      setStep(1);
+      showToast("Retour à l’étape 1");
+    }
+
+    function verifyCode(){
+      const entered = document.getElementById("usercode").value.trim();
+      if(entered === FIXED_CODE){
+        setStep(3);
+        showToast("Code correct");
+      }else{
+        showToast("Code incorrect");
+      }
+    }
+
+    function finish(){
+      showToast("Terminé");
+    }
+
+    document.getElementById("fixedCode").textContent = FIXED_CODE;
+
+    const wrap = document.querySelector(".card");
+    for(let i = 0; i < 18; i++){
+      const s = document.createElement("span");
+      s.className = "spark";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = (55 + Math.random() * 45) + "%";
+      s.style.animationDelay = (Math.random() * 6) + "s";
+      s.style.animationDuration = (4 + Math.random() * 4) + "s";
+      wrap.appendChild(s);
+    }
+
+    document.getElementById("usercode").addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+    });
+  </script>
+</body>
+</html>
